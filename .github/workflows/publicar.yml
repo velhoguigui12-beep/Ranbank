@@ -1,0 +1,49 @@
+# Publica o RanBank na Cloudflare sempre que o ramo main muda.
+# Precisa do segredo CLOUDFLARE_API_TOKEN em Settings > Secrets and variables > Actions.
+# Se a montagem do site falhar (por exemplo, uma aspa apagada), nada é publicado
+# e o site no ar continua como estava.
+name: Publicar site
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "**.md"
+      - "backend/**"
+  workflow_dispatch:
+
+# Uma publicação por vez: se chegar outra mudança, a nova espera a anterior terminar.
+concurrency:
+  group: publicar-site
+  cancel-in-progress: false
+
+jobs:
+  publicar:
+    name: Montar e publicar
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - name: Baixar o código
+        uses: actions/checkout@v4
+
+      - name: Preparar o Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Avisar se falta o token da Cloudflare
+        if: env.CLOUDFLARE_API_TOKEN == ''
+        run: |
+          echo "::warning::Falta o segredo CLOUDFLARE_API_TOKEN. O site foi montado para conferência, mas não foi publicado."
+          npm run build:cloudflare
+
+      - name: Montar e publicar na Cloudflare
+        if: env.CLOUDFLARE_API_TOKEN != ''
+        run: npm run deploy:cloudflare
