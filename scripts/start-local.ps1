@@ -2,7 +2,7 @@
 $ErrorActionPreference = 'Stop'
 $projectRoot = Split-Path $PSScriptRoot -Parent
 $toolRoot = Join-Path $env:USERPROFILE '.cache/ranbank-tools'
-$nodeCandidates = @((Get-Command node -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source), (Join-Path $env:USERPROFILE '.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node.exe'))
+$nodeCandidates = @((Get-Command node -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source), (Join-Path $toolRoot 'node/node.exe'))
 $nodePath = $nodeCandidates | Where-Object { $_ -and (Test-Path -LiteralPath $_) } | Select-Object -First 1
 if (!$nodePath) { throw 'Instale Node.js 22.13 ou superior para iniciar o frontend.' }
 $nodeVersion = & $nodePath -p 'process.versions.node'

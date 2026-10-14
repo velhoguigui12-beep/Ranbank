@@ -12,4 +12,3 @@ backend
 .wrangler
 .neon
 *.log
-HANDOFF_CODEX.md

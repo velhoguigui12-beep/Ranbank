@@ -27,7 +27,7 @@ O script confere Node, Java 21, Maven e dependências, inicia os dois serviços 
 
 ## Hospedagem confirmada
 
-Frontend e API estão no Render gratuito, acompanhando a branch `codex/ranbank-platform-upgrade`. As correções recentes de `main` foram integradas antes da publicação. Cloud Run não está habilitado no projeto configurado e o Worker com o nome deste projeto não está publicado na Cloudflare.
+Frontend e API estão no Render gratuito, acompanhando a branch `main`. Cloud Run não está habilitado no projeto configurado e o Worker com o nome deste projeto não está publicado na Cloudflare.
 
 O PostgreSQL gratuito informado pelo Render expira em **19/09/2026**. Antes disso, é necessário migrar os dados para um banco persistente ou contratar um plano adequado. Nenhum plano pago foi contratado nesta revisão. Mesmo com as correções, rede indisponível, suspensão do serviço e expiração do banco podem impedir acesso. Não há garantia técnica de disponibilidade absoluta em uma hospedagem gratuita.
 
