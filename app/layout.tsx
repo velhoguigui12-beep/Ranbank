@@ -23,6 +23,7 @@ import "./clarity-refresh.css";
 import "./site.css";
 import "./bank-clean.css";
 import "./rani.css";
+import "./foundation.css";
 
 const geist = Geist({ variable: "--font-geist", subsets: ["latin"] });
 

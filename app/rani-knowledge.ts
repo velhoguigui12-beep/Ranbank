@@ -148,7 +148,7 @@ const INTENTS: Intent[] = [
   {
     topic: "Fundação RanBank",
     keywords: ["fundacao", "fundacao ranbank", "curso", "cursos", "aulas", "orientacao", "orientacoes", "escola", "aprender com voces", "proximos passos do projeto"],
-    site: { text: "A Fundação RanBank está em construção: vai reunir cursos e orientações feitos pela própria turma, com cada pessoa ensinando o que sabe da sua área. Ainda não tem data para abrir.", link: { label: "Ver a Fundação", href: "/fundacao" } },
+    site: { text: "A Fundação RanBank tem um site com o catálogo de cursos da turma: educação financeira, gestão de tempo, xadrez, futebol, impressora 3D e outros, cada um ensinado por uma pessoa do RanBank. As aulas estão sendo preparadas.", link: { label: "Ver os cursos", href: "/fundacao/cursos" } },
   },
   {
     topic: "Parcerias",

@@ -721,49 +721,6 @@ body:has(.rs) .rb-noncommercial-seal { display: none; }
 .cb-plan .cb-ghost { justify-self: center; }
 
 
-/* Fundação RanBank (em breve) ------------------------------------------- */
-.fd { position: relative; overflow: hidden; min-height: calc(100vh - 72px); display: grid; align-items: center; padding: 72px 0 96px; background: var(--rs-bg); }
-.fd-ghost { position: absolute; inset: 0; padding-top: 56px; filter: blur(2.5px); opacity: 0.8; pointer-events: none; user-select: none; animation: fd-drift 18s ease-in-out infinite alternate; }
-.fd-ghost::after { content: ""; position: absolute; inset: 0; background: radial-gradient(45% 60% at 50% 50%, rgba(10, 10, 12, 0.7), rgba(10, 10, 12, 0.15) 100%); }
-.fd-ghost h2 { margin-top: 18px; font-weight: 700; font-size: clamp(36px, 5vw, 64px); letter-spacing: -0.035em; }
-.fd-filters { display: flex; flex-wrap: wrap; gap: 8px; margin: 28px 0; }
-.fd-filters span { padding: 8px 16px; border-radius: 999px; border: 1px solid var(--rs-line); color: var(--rs-muted); font-size: 15px; }
-.fd-filters span.is-on { background: var(--rs-blue); border-color: var(--rs-blue); color: #fff; }
-.fd-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
-.fd-grid article { display: grid; gap: 8px; padding: 20px; border-radius: 20px; border: 1px solid var(--rs-line); background: var(--rs-surface); }
-.fd-grid small { color: var(--rs-blue-text); font-size: 13px; font-weight: 600; }
-.fd-grid strong { font-size: 18px; line-height: 1.25; }
-.fd-meta { color: var(--rs-muted); font-size: 14px; }
-.fd-bar { height: 6px; border-radius: 999px; background: var(--rs-surface-2); overflow: hidden; }
-.fd-bar i { display: block; height: 100%; background: var(--rs-green); }
-.fd-pages { display: flex; justify-content: center; gap: 8px; margin-top: 32px; }
-.fd-pages span { display: grid; place-items: center; min-width: 40px; height: 40px; border-radius: 12px; border: 1px solid var(--rs-line); color: var(--rs-muted); }
-.fd-pages span.is-on { background: var(--rs-text); color: var(--rs-bg); }
-@keyframes fd-drift { from { transform: translateY(0); } to { transform: translateY(-40px); } }
-
-.fd-front { position: relative; z-index: 1; display: grid; justify-items: center; }
-.fd-card { width: min(680px, 100%); display: grid; gap: 18px; padding: 40px; border-radius: 28px; border: 1px solid rgba(255, 255, 255, 0.14); background: rgba(17, 18, 21, 0.82); backdrop-filter: blur(10px); box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5); }
-.fd-soon { justify-self: start; display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 999px; background: rgba(61, 220, 132, 0.14); color: var(--rs-green); font-size: 14px; font-weight: 700; }
-.fd-soon::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: currentColor; animation: fd-pulse 1.6s ease-in-out infinite; }
-@keyframes fd-pulse { 50% { opacity: .25; } }
-.fd-card h1 { font-size: clamp(40px, 5.6vw, 68px); line-height: 1; letter-spacing: -0.04em; font-weight: 700; }
-.fd-card > p { font-size: 19px; color: #c5c9d2; }
-.fd-card ul { display: grid; gap: 12px; margin: 4px 0; padding: 0; list-style: none; }
-.fd-card li { display: flex; gap: 14px; align-items: flex-start; }
-.fd-card li .rs-tile-icon { flex: none; }
-.fd-card li div { display: grid; gap: 2px; }
-.fd-card li strong { font-size: 17px; }
-.fd-card li span { color: var(--rs-muted); font-size: 16px; }
-.fd-note { padding: 14px 16px; border-radius: 14px; background: rgba(37, 99, 235, 0.14); color: #dbe4ff !important; font-size: 16px !important; }
-.fd-actions { display: flex; flex-wrap: wrap; gap: 12px; }
-
-@media (max-width: 960px) { .fd-grid { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 640px) {
-  .fd { padding: 40px 0 64px; }
-  .fd-card { padding: 26px 20px; }
-  .fd-grid { grid-template-columns: 1fr; }
-}
-@media (prefers-reduced-motion: reduce) { .fd-ghost, .fd-soon::before { animation: none; } }
 
 /* Organograma: crachá ao passar o mouse ou tocar (OrganizationPublicPage.tsx) */
 .rs.rb-org-page main { overflow-x: clip; overflow-y: visible; }

@@ -17,7 +17,11 @@ Dá para fazer tudo pelo navegador, sem instalar nada.
 | Site: início, Segurança, Privacidade, Fundação, rodapé | `app/PublicSiteGate.tsx` |
 | As 4 telas de celular da página inicial | `app/CalmBank.tsx` |
 | Respostas e sugestões da Rani | `app/rani-knowledge.ts` |
-| Nomes e cargos do organograma | `app/OrganizationPublicPage.tsx` |
+| Fundação: cursos, quem ensina, categorias e trilha | `app/foundation-courses.ts` |
+| Fundação: textos da página /fundacao no site do banco | `app/PublicSiteGate.tsx` (procure “Aprenda com”) |
+| Fundação: as frases de “O que você quer aprender agora?” | `app/PublicSiteGate.tsx` (procure `FOUNDATION_WISHES`) |
+| Fundação: crachá de quem ensina (catálogo e página /fundacao) | `app/FoundationBadge.tsx` |
+| Nomes e cargos do organograma (e dos crachás) | `app/team.ts` |
 | Página Projetos | `app/ProjectsPublicPage.tsx` |
 | Textos de dentro do banco | `app/page.tsx` e a pasta `app/bank/` |
 | Cartões (nomes, benefícios, mensagens) | `app/bank/CardCatalog.tsx` |

@@ -183,13 +183,14 @@ test("shows the institutional identity, FAQ and a project-wide non-commercial se
 test("provides an interactive organization chart with role profiles", async () => {
   const publicSite = await readFile(publicSiteUrl, "utf8");
   const organization = await readFile(organizationUrl, "utf8");
+  const team = await readFile(new URL("../app/team.ts", import.meta.url), "utf8");
   assert.match(publicSite, /href="\/organograma"/);
   assert.match(organization, /ESTRUTURA ORGANIZACIONAL/);
   assert.match(organization, /Presidente \/ CEO/);
   assert.match(organization, /Ouvidora-Geral/);
   assert.match(organization, /Vice-Presidente/);
-  assert.match(organization, /Desenvolvedor \/ Analista de TI/);
-  assert.match(organization, /Assistente \/ Analista de RH/);
+  assert.match(team, /Desenvolvedor \/ Analista de TI/);
+  assert.match(team, /Assistente \/ Analista de RH/);
   // Crachá ao passar o mouse ou tocar, em vez de uma página com letra genérica.
   assert.match(organization, /function RoleBadge\(/);
   assert.match(organization, /Quem ocupa o cargo/);
@@ -316,13 +317,41 @@ test("gives new accounts the basic card and keeps the Ecocard for house clients"
   assert.match(suite, /type="range" min=\{minLimit\} max=\{LIMIT_MAX\[ownCard\]\}/);
 });
 
-test("announces the RanBank Foundation as coming soon between Quem somos and Ajuda", async () => {
+test("links the bank's Foundation page to the Foundation course catalog", async () => {
   const publicSite = await readFile(new URL("../app/PublicSiteGate.tsx", import.meta.url), "utf8");
   const route = await readFile(new URL("../app/fundacao/page.tsx", import.meta.url), "utf8");
+  const catalogRoute = await readFile(new URL("../app/fundacao/cursos/page.tsx", import.meta.url), "utf8");
+  const catalog = await readFile(new URL("../app/FoundationCatalog.tsx", import.meta.url), "utf8");
+  const courses = await readFile(new URL("../app/foundation-courses.ts", import.meta.url), "utf8");
   assert.match(publicSite, /\{ href: "\/organograma", label: "Quem somos" \},\s*\{ href: "\/fundacao", label: "Fundação" \},\s*\{ href: "\/#duvidas", label: "Ajuda" \}/);
   assert.match(publicSite, /export function FoundationPublicPage\(\)/);
-  assert.match(publicSite, /<span className="fd-soon">Em breve<\/span>/);
+  assert.match(publicSite, /Aprenda com <span>quem fez\.<\/span>/);
+  assert.match(publicSite, /href=\{FOUNDATION_SITE_URL\} target="_blank" rel="noopener"/);
+  // Vitrine: parede de cursos, "O que você quer aprender agora?" com link direto para o curso e varal de crachás.
+  for (const piece of ["function FoundationWall(", "function FoundationMatch(", "function FoundationTeachers(", "O que você quer aprender agora?"]) assert.ok(publicSite.includes(piece), piece);
+  assert.match(publicSite, /\$\{FOUNDATION_SITE_URL\}\?curso=\$\{course\.id\}/);
+  assert.match(catalog, /get\("curso"\)/);
   assert.match(route, /FoundationPublicPage/);
+  assert.match(catalogRoute, /FoundationCatalog/);
+  assert.match(courses, /export const FOUNDATION_SITE_URL = "\/fundacao\/cursos";/);
+  // Cursos reais, com quem ensina, e a trilha Isabella → Natanny → Rangel.
+  for (const teacher of ["Isabella", "Natanny", "Lívia", "Davi", "Lúcio", "Giulianno", "Pedro", "Gustavo", "Jordan", "Marcos", "Luiddy", "Rangel", "Sarah", "Yasmin"]) assert.ok(courses.includes(`"${teacher}"`), teacher);
+  assert.match(courses, /STARTER_PATH = \["educacao-financeira", "gestao-tempo", "autodesenvolvimento"\]/);
+  for (const row of ["Continue assistindo", "Comece por aqui", "Minha lista", "Quem ensina", "Porque você fez", "Porque você gostou de", "Mais como este"]) assert.ok(catalog.includes(row), row);
+  // Prévia ao passar o mouse, modal com o que se aprende e player de prévia que salva o progresso.
+  assert.match(catalog, /function HoverPreview\(/);
+  assert.match(catalog, /O que você vai aprender até o final do curso/);
+  assert.match(catalog, /function Player\(/);
+  // Mesma conta do banco: usa a sessão do site, tem perfil, sair da conta e volta para a Fundação depois do login.
+  assert.match(catalog, /\/api\/auth\/session/);
+  assert.match(catalog, /function ProfileDialog\(/);
+  for (const text of ["Cursos concluídos", "Sair da conta", "Voltar ao RanBank", "/banco?volta=/fundacao/cursos"]) assert.ok(catalog.includes(text), text);
+  const bankPage = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
+  assert.match(bankPage, /get\("volta"\)/);
+  assert.match(bankPage, /back\.startsWith\("\/fundacao\/"\)/);
+  assert.match(courses, /export function similarCourses\(/);
+  assert.equal((courses.match(/learn: \[/g) ?? []).length, 12, "todo curso tem o que vai aprender");
+  assert.match(catalog, /Projeto educacional e demonstrativo/);
 });
 
 test("shows the app from the inside with four calm, interactive screens", async () => {

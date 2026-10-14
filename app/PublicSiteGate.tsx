@@ -2,10 +2,14 @@
 /* eslint-disable @next/next/no-img-element -- Vinext serves the local RanBank brand image directly. */
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import type { AnchorHTMLAttributes, ReactNode } from "react";
+import type { AnchorHTMLAttributes, CSSProperties, ReactNode } from "react";
 import { Icon } from "./SiteIcons";
 import RaniAssistant, { openRani } from "./RaniAssistant";
 import { ControlDemo, MonthDemo, NoticesDemo, ScamHelpDemo } from "./CalmBank";
+import { CATEGORIES, COURSES, FOUNDATION_SITE_URL, categoryOf, courseImage, teachersLabel } from "./foundation-courses";
+import type { CategoryId, Course } from "./foundation-courses";
+import { TeacherBadge, teachingParts } from "./FoundationBadge";
+import { CategoryGlyph, PlayGlyph } from "./FoundationIcons";
 import type { IconName } from "./SiteIcons";
 
 // Vídeo de fundo da abertura. Usa só os primeiros segundos: depois entra a arte antiga do cartão, com outra bandeira.
@@ -177,7 +181,7 @@ export function PublicFooter() {
           <Link href="/projetos">Projetos e impacto</Link>
           <Link href="/instituto">Instituto RanBank</Link>
           <Link href="/organograma">Nossa equipe</Link>
-          <Link href="/fundacao">Fundação RanBank (em breve)</Link>
+          <Link href="/fundacao">Fundação RanBank</Link>
         </div>
         <div className="rs-footer-col">
           <strong>Proteção</strong>
@@ -716,63 +720,196 @@ export function PrivacyPublicPage() {
   );
 }
 
-/* Fundação RanBank: ainda em construção. O fundo mostra uma prévia de como a página vai ficar. */
-const FOUNDATION_AREAS = ["Todos", "Tecnologia", "Comunicação", "Negócios", "Pessoas", "Ouvidoria"];
-const FOUNDATION_PREVIEW: Array<{ area: string; title: string; lessons: number; icon: IconName }> = [
-  { area: "Negócios", title: "Organizar o dinheiro do mês", lessons: 6, icon: "vault" },
-  { area: "Tecnologia", title: "Primeiros passos em programação", lessons: 8, icon: "key" },
-  { area: "Comunicação", title: "Como apresentar uma ideia", lessons: 5, icon: "chat" },
-  { area: "Pessoas", title: "Seu primeiro currículo", lessons: 4, icon: "users" },
-  { area: "Tecnologia", title: "Segurança digital no dia a dia", lessons: 6, icon: "shield" },
-  { area: "Ouvidoria", title: "Atendimento que acolhe", lessons: 4, icon: "phone" },
-  { area: "Negócios", title: "Como funciona um banco por dentro", lessons: 7, icon: "card" },
-  { area: "Comunicação", title: "Redes sociais com propósito", lessons: 5, icon: "eye" },
+/* Fundação RanBank: vitrine no site do banco que leva ao site da Fundação (catálogo de cursos). */
+const FOUNDATION_WISHES: Array<{ category: CategoryId; wish: string }> = [
+  { category: "vida", wish: "Cuidar do meu dinheiro e do meu tempo" },
+  { category: "tecnologia", wish: "Entender o computador e criar coisas" },
+  { category: "jogos", wish: "Pensar melhor jogando" },
+  { category: "esporte", wish: "Me mexer e jogar em equipe" },
+  { category: "expressao", wish: "Me conhecer e me expressar" },
 ];
-const FOUNDATION_PLAN: Array<{ icon: IconName; title: string; text: string }> = [
-  { icon: "book", title: "Cursos curtos", text: "Aulas simples, feitas por quem viveu o projeto, para quem está começando." },
-  { icon: "users", title: "Cada área ensina", text: "Tecnologia, comunicação, negócios, pessoas e ouvidoria: cada um compartilha o que aprendeu." },
-  { icon: "sprout", title: "Orientação", text: "Conversas sobre primeiro emprego, estudos e como transformar uma ideia em projeto." },
+const FOUNDATION_STEPS = [
+  { title: "Escolha", text: "Passe o mouse num curso para ver a prévia. Abra para ver tudo o que você vai aprender até o final." },
+  { title: "Assista no seu ritmo", text: "Parou no meio? O curso fica em Continue assistindo, do ponto em que você parou." },
+  { title: "Entre com a sua conta RanBank", text: "O mesmo CPF e a mesma senha do banco. Seus cursos concluídos e a sua lista ficam no seu perfil." },
 ];
+const courseLink = (course: Course) => `${FOUNDATION_SITE_URL}?curso=${course.id}`;
+const TEACHING = teachingParts(COURSES);
+const TEACHER_COUNT = new Set(TEACHING.map((person) => person.name)).size;
+
+/** Parede de cursos que desliza devagar atrás do título, como a abertura de um app de filmes. */
+function FoundationWall() {
+  const rows = [0, 5, 2, 9, 7].map((shift) => [...COURSES.slice(shift), ...COURSES.slice(0, shift)]);
+  return (
+    <div className="fdn-wall" aria-hidden="true">
+      <div className="fdn-wall-tilt">
+        {rows.map((row, index) => (
+          <div key={index} className={`fdn-wall-row ${index % 2 ? "is-reverse" : ""}`} style={{ "--speed": `${150 + index * 22}s` } as CSSProperties}>
+            {[...row, ...row].map((course, position) => (
+              <span key={`${course.id}-${position}`} className="fdn-wall-tile" style={{ "--accent": categoryOf(course.category).accent } as CSSProperties}>
+                <img src={courseImage(course)} alt="" decoding="async" />
+                <b>{course.title}</b>
+              </span>
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/** "O que você quer aprender agora?": a pessoa escolhe uma vontade e já vê o curso para começar. */
+function FoundationMatch() {
+  const [pick, setPick] = useState<CategoryId>("vida");
+  const category = categoryOf(pick);
+  const [main, ...others] = COURSES.filter((course) => course.category === pick);
+  return (
+    <div className="fdn-match" style={{ "--pick": category.accent, "--pick-bg": category.bg } as CSSProperties}>
+      <div className="fdn-match-ask" role="group" aria-label="O que você quer aprender agora?">
+        {FOUNDATION_WISHES.map(({ category: id, wish }) => {
+          const option = categoryOf(id);
+          return (
+            <button type="button" key={id} aria-pressed={pick === id} onClick={() => setPick(id)} style={{ "--chip": option.accent, "--chip-bg": option.bg } as CSSProperties}>
+              <span className="fdn-match-icon"><CategoryGlyph icon={option.icon} size={22} /></span>
+              <span className="fdn-match-wish">{wish}</span>
+              <span className="fdn-match-short">{option.name}</span>
+              <small>{COURSES.filter((course) => course.category === id).length} cursos</small>
+            </button>
+          );
+        })}
+      </div>
+      <div className="fdn-match-result" key={pick} aria-live="polite">
+        <a className="fdn-match-main" href={courseLink(main)} target="_blank" rel="noopener noreferrer">
+          <span className="fdn-match-photo">
+            <img src={courseImage(main)} alt="" />
+            <span className="fdn-match-tag"><CategoryGlyph icon={category.icon} size={14} />{category.name}</span>
+          </span>
+          <span className="fdn-match-copy">
+            <small>Seu primeiro curso pode ser</small>
+            <strong>{main.title}</strong>
+            <em>{main.hook}</em>
+            <span className="fdn-match-learn">
+              {main.learn.slice(0, 3).map((topic) => <span key={topic}>{topic}</span>)}
+            </span>
+            <span className="fdn-match-foot">
+              <span>Com {teachersLabel(main)}</span>
+              <span className="fdn-match-cta"><PlayGlyph size={14} /> Ver este curso</span>
+            </span>
+          </span>
+        </a>
+        {others.length > 0 && (
+          <div className="fdn-match-more">
+            <span>Também nesta categoria</span>
+            {others.map((course) => (
+              <a key={course.id} href={courseLink(course)} target="_blank" rel="noopener noreferrer">
+                <img src={courseImage(course)} alt="" loading="lazy" />
+                <span><strong>{course.title}</strong><small>Com {teachersLabel(course)}</small></span>
+              </a>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/** Varal de crachás: cada pessoa da turma que ensina, passando devagar. Parar o mouse segura o varal. */
+function FoundationTeachers() {
+  return (
+    <div className="fdn-rail">
+      <div className="fdn-rail-track">
+        {[...TEACHING, ...TEACHING].map((person, index) => {
+          const copy = index >= TEACHING.length;
+          return (
+            <a
+              key={`${person.name}-${person.course.id}-${index}`}
+              className="fdn-rail-item"
+              href={courseLink(person.course)}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-hidden={copy || undefined}
+              tabIndex={copy ? -1 : undefined}
+              aria-label={copy ? undefined : `${person.name} ensina ${person.part ?? person.course.title}. Ver o curso`}
+            >
+              <TeacherBadge name={person.name} course={person.course} part={person.part} />
+            </a>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
 
 export function FoundationPublicPage() {
   return (
-    <PublicShell className="rs-page">
-      <section className="fd">
-        {/* Prévia desfocada da página que está por vir */}
-        <div className="fd-ghost" aria-hidden="true">
-          <div className="rs-wrap">
-            <span className="rs-chip">Fundação RanBank</span>
-            <h2>Aprenda com quem fez.</h2>
-            <div className="fd-filters">{FOUNDATION_AREAS.map((area, index) => <span key={area} className={index === 0 ? "is-on" : ""}>{area}</span>)}</div>
-            <div className="fd-grid">
-              {FOUNDATION_PREVIEW.map((course, index) => (
-                <article key={course.title}>
-                  <i className="rs-tile-icon"><Icon name={course.icon} /></i>
-                  <small>{course.area}</small>
-                  <strong>{course.title}</strong>
-                  <span className="fd-meta">{course.lessons} aulas</span>
-                  <span className="fd-bar"><i style={{ width: `${(index * 23) % 90 + 10}%` }} /></span>
-                </article>
-              ))}
-            </div>
-            <nav className="fd-pages"><span>‹</span><span className="is-on">1</span><span>2</span><span>3</span><span>…</span><span>8</span><span>›</span></nav>
+    <PublicShell className="rs-page fdn-page">
+      <section className="fdn-hero">
+        <FoundationWall />
+        <div className="rs-wrap fdn-hero-copy">
+          <span className="fdn-kicker"><span className="fdn-mark" aria-hidden="true"><img src="/ranbank-logo-transparent.png" alt="" /></span> Fundação RanBank</span>
+          <h1>Aprenda com <span>quem fez.</span></h1>
+          <p>{COURSES.length} cursos curtos ensinados pela própria turma do RanBank. De dinheiro a xadrez, de impressora 3D a futebol de areia.</p>
+          <div className="fdn-actions">
+            <Link className="rs-btn rs-btn-light rs-btn-lg fdn-btn-play" href={FOUNDATION_SITE_URL} target="_blank" rel="noopener"><PlayGlyph size={18} /> Entrar na Fundação</Link>
+            <Link className="rs-btn rs-btn-outline rs-btn-lg" href="#descobrir">Descobrir meu curso</Link>
           </div>
+          <ul className="fdn-facts">
+            <li><b>{COURSES.length}</b> cursos</li>
+            <li><b>{TEACHER_COUNT}</b> pessoas ensinando</li>
+            <li><b>{CATEGORIES.length}</b> categorias</li>
+          </ul>
         </div>
+      </section>
 
-        {/* O que existe hoje: o anúncio */}
-        <div className="rs-wrap fd-front">
-          <div className="fd-card">
-            <span className="fd-soon">Em breve</span>
-            <h1>Fundação RanBank</h1>
-            <p>Um espaço de cursos e orientações feito pela própria turma. Cada pessoa vai ensinar o que sabe da sua área, para que o que aprendemos construindo o RanBank chegue a mais gente.</p>
-            <ul>
-              {FOUNDATION_PLAN.map((item) => <li key={item.title}><i className="rs-tile-icon"><Icon name={item.icon} /></i><div><strong>{item.title}</strong><span>{item.text}</span></div></li>)}
-            </ul>
-            <p className="fd-note">Estamos construindo. O RanBank continua, e esta é a próxima parte da história.</p>
-            <div className="fd-actions">
-              <Link className="rs-btn rs-btn-primary" href="/organograma">Conhecer quem faz <Icon name="arrow" size={18} /></Link>
-              <Link className="rs-btn rs-btn-outline" href="/">Voltar ao início</Link>
-            </div>
+      <section className="fdn-section" id="descobrir">
+        <div className="rs-wrap">
+          <header className="fdn-head">
+            <span className="fdn-kicker">Descubra o seu curso</span>
+            <h2>O que você quer aprender agora?</h2>
+            <p>Escolha uma vontade. A gente mostra por onde começar.</p>
+          </header>
+          <FoundationMatch />
+        </div>
+      </section>
+
+      <section className="fdn-section fdn-section-teachers">
+        <div className="rs-wrap">
+          <header className="fdn-head">
+            <span className="fdn-kicker">Quem ensina</span>
+            <h2>Seus professores são a turma do RanBank.</h2>
+            <p>Cada pessoa ensina o que sabe e o que gosta de fazer. Clique num crachá para ver o curso.</p>
+          </header>
+        </div>
+        <FoundationTeachers />
+      </section>
+
+      <section className="fdn-section">
+        <div className="rs-wrap">
+          <header className="fdn-head">
+            <span className="fdn-kicker">Como funciona</span>
+            <h2>Três passos e você já está assistindo.</h2>
+          </header>
+          <ol className="fdn-steps">
+            {FOUNDATION_STEPS.map((step, index) => (
+              <li key={step.title}>
+                <b>{String(index + 1).padStart(2, "0")}</b>
+                <h3>{step.title}</h3>
+                <p>{step.text}</p>
+              </li>
+            ))}
+          </ol>
+          <p className="fdn-honest">As aulas estão sendo gravadas pela turma. O catálogo já mostra tudo o que vem por aí.</p>
+        </div>
+      </section>
+
+      <section className="fdn-final">
+        <div className="rs-wrap">
+          <img className="fdn-final-logo" src="/ranbank-logo-transparent.png" alt="" />
+          <h2>A próxima parte da história.</h2>
+          <p>O RanBank continua. Agora, o que a turma sabe vira curso para mais gente.</p>
+          <div className="fdn-actions">
+            <Link className="rs-btn rs-btn-light rs-btn-lg fdn-btn-play" href={FOUNDATION_SITE_URL} target="_blank" rel="noopener"><PlayGlyph size={18} /> Entrar na Fundação</Link>
+            <Link className="rs-btn fdn-btn-ghost rs-btn-lg" href="/organograma">Conhecer quem faz</Link>
           </div>
         </div>
       </section>

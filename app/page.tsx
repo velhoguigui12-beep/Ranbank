@@ -343,6 +343,14 @@ export default function Home() {
     return () => { window.removeEventListener("ranbank:retry-account", retry); window.removeEventListener("ranbank:reauthenticate", exit); };
   }, [authStatus]);
 
+  // Quem veio da Fundação para entrar (/banco?volta=/fundacao/cursos) volta para lá depois do login.
+  // Só aceita caminhos da própria Fundação, para ninguém usar o link para mandar a pessoa a outro site.
+  useEffect(() => {
+    if (authStatus !== "authenticated") return;
+    const back = new URLSearchParams(window.location.search).get("volta");
+    if (back && (back === "/fundacao" || back.startsWith("/fundacao/")) && !back.includes("//") && !back.includes("\\")) window.location.assign(back);
+  }, [authStatus]);
+
   const login = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (loginLoading || loginPin.length !== 4) return;
