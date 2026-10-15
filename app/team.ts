@@ -47,7 +47,7 @@ export const departments: Array<{ id: string; title: string; accent: string; rol
     title: "Tecnologia",
     accent: "01",
     roles: [
-      { id: "diretor-tecnologia", chartTitle: "Diretor de Tecnologia", title: "Diretor de Tecnologia", person: "Lúcio", area: "Tecnologia", description: "Lidera a estratégia tecnológica e orienta a construção de soluções digitais confiáveis, escaláveis e alinhadas à experiência bancária.", responsibilities: ["Definir arquitetura e prioridades técnicas", "Orientar segurança e evolução dos sistemas", "Conectar tecnologia à estratégia do banco"] },
+      { id: "diretor-tecnologia", chartTitle: "Diretor de Tecnologia", title: "Diretor de Tecnologia", person: "Lucio", area: "Tecnologia", description: "Lidera a estratégia tecnológica e orienta a construção de soluções digitais confiáveis, escaláveis e alinhadas à experiência bancária.", responsibilities: ["Definir arquitetura e prioridades técnicas", "Orientar segurança e evolução dos sistemas", "Conectar tecnologia à estratégia do banco"] },
       { id: "gerente-tecnologia", chartTitle: "Gerente de Tecnologia", title: "Gerente de Tecnologia", person: "Davi", area: "Tecnologia", description: "Coordena entregas, pessoas e rotinas técnicas, garantindo qualidade e continuidade no desenvolvimento dos produtos.", responsibilities: ["Planejar entregas técnicas", "Acompanhar qualidade e desempenho", "Organizar o trabalho da equipe"] },
       { id: "analista-ti", chartTitle: "Desenvolvedor / Analista de TI", title: "Desenvolvedor e Analista de TI", person: "Jordan", area: "Tecnologia", description: "Desenvolve, testa e mantém as funcionalidades que conectam a interface do RanBank aos seus serviços e dados.", responsibilities: ["Implementar novas funcionalidades", "Investigar e corrigir problemas", "Documentar e testar soluções"] },
     ],
@@ -80,7 +80,7 @@ export const departments: Array<{ id: string; title: string; accent: string; rol
       { id: "diretor-rh", chartTitle: "Diretor de RH", title: "Diretor de Recursos Humanos", person: "Pedro", area: "RH / Gestão de Pessoas", description: "Conduz a estratégia de pessoas e promove uma cultura de colaboração, desenvolvimento e respeito dentro do RanBank.", responsibilities: ["Definir estratégia de pessoas", "Fortalecer cultura e valores", "Orientar desenvolvimento organizacional"] },
       { id: "gerente-rh", chartTitle: "Gerente de RH", title: "Gerente de Recursos Humanos", person: "Yasminn", area: "RH / Gestão de Pessoas", description: "Coordena processos de gestão de pessoas e acompanha a experiência das equipes ao longo de sua jornada na organização.", responsibilities: ["Coordenar rotinas de RH", "Apoiar lideranças e equipes", "Planejar ações de desenvolvimento"] },
       { id: "analista-rh-sahy", chartTitle: "Assistente / Analista de RH", title: "Assistente e Analista de RH", person: "Sahy", area: "RH / Gestão de Pessoas", description: "Apoia processos de pessoas, comunicação interna e organização de iniciativas voltadas ao desenvolvimento das equipes.", responsibilities: ["Apoiar processos de RH", "Organizar ações internas", "Atender equipes e lideranças"] },
-      { id: "analista-rh-luiddy", chartTitle: "Assistente / Analista de RH", title: "Assistente e Analista de RH", person: "Luiddy", area: "RH / Gestão de Pessoas", description: "Contribui para as rotinas administrativas da área e para uma experiência interna organizada, acolhedora e eficiente.", responsibilities: ["Apoiar rotinas administrativas", "Manter registros organizados", "Contribuir com ações de clima e cultura"] },
+      { id: "analista-rh-luidy", chartTitle: "Assistente / Analista de RH", title: "Assistente e Analista de RH", person: "Luidy", area: "RH / Gestão de Pessoas", description: "Contribui para as rotinas administrativas da área e para uma experiência interna organizada, acolhedora e eficiente.", responsibilities: ["Apoiar rotinas administrativas", "Manter registros organizados", "Contribuir com ações de clima e cultura"] },
     ],
   },
 ];
@@ -99,13 +99,3 @@ export const AREA_COLOR: Record<string, string> = {
 
 /** Número do crachá (RB-001, RB-002…), na ordem do organograma. */
 export const badgeNumber = (role: OrganizationRole) => `RB-${String(allRoles.indexOf(role) + 1).padStart(3, "0")}`;
-
-// Alguns nomes aparecem escritos de outro jeito na lista de cursos da Fundação.
-const NAME_ALIASES: Record<string, string> = { isabella: "isabela", yasmin: "yasminn" };
-const key = (name: string) => name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
-
-/** Cargo de uma pessoa pelo primeiro nome (aceita pequenas diferenças de grafia). */
-export function roleOf(name: string) {
-  const wanted = NAME_ALIASES[key(name)] ?? key(name);
-  return allRoles.find((role) => key(role.person) === wanted);
-}

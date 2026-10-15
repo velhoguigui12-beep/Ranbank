@@ -31,11 +31,9 @@ export type Course = {
   id: string;
   title: string;
   category: CategoryId;
-  /** Quem ensina (uma ou mais pessoas da turma). */
-  teachers: string[];
   description: string;
   /** Partes do curso, quando já estão definidas. */
-  modules?: Array<{ title: string; teacher: string }>;
+  modules?: Array<{ title: string }>;
   /** Assuntos do curso. Cursos com assuntos em comum aparecem como "parecidos". */
   tags: string[];
   /** Frase curta que aparece ao passar o mouse, para dar vontade de assistir. */
@@ -45,59 +43,59 @@ export type Course = {
 };
 
 export const COURSES: Course[] = [
-  { id: "educacao-financeira", title: "Educação financeira pessoal", category: "vida", teachers: ["Isabella"], tags: ["Dinheiro", "Planejamento", "Dia a dia"],
+  { id: "educacao-financeira", title: "Educação financeira pessoal", category: "vida", tags: ["Dinheiro", "Planejamento", "Dia a dia"],
     hook: "Descubra para onde vai o seu dinheiro e faça ele durar até o fim do mês.",
     learn: ["Montar um orçamento simples com o que entra e o que sai", "Separar gastos fixos, variáveis e o que é desejo", "Criar uma reserva para emergências, mesmo guardando pouco", "Usar Pix, cartão e crédito sem cair em dívida", "Reconhecer golpes e promessas de dinheiro fácil"],
     description: "Como organizar o dinheiro do mês, separar o que é gasto do que é sonho e começar a guardar, mesmo ganhando pouco." },
-  { id: "gestao-tempo", title: "Gestão de tempo", category: "vida", teachers: ["Natanny"], tags: ["Planejamento", "Rotina", "Estudos"],
+  { id: "gestao-tempo", title: "Gestão de tempo", category: "vida", tags: ["Planejamento", "Rotina", "Estudos"],
     hook: "Dê conta de estudo, trabalho e ainda sobre tempo para você.",
     learn: ["Planejar a semana em poucos minutos", "Separar o que é urgente do que é importante", "Dividir tarefas grandes em passos pequenos", "Diminuir distrações do celular na hora de focar", "Montar uma rotina que inclui descanso"],
     description: "Jeitos simples de planejar a semana, dar conta de estudo e trabalho e sobrar tempo para descansar." },
-  { id: "primeiros-socorros", title: "Primeiros socorros", category: "vida", teachers: ["Lívia"], tags: ["Saúde", "Cuidado", "Dia a dia"],
+  { id: "primeiros-socorros", title: "Primeiros socorros", category: "vida", tags: ["Saúde", "Cuidado", "Dia a dia"],
     hook: "Os primeiros minutos fazem diferença. Saiba como agir.",
     learn: ["Avaliar a cena e se proteger antes de ajudar", "Chamar o socorro certo e passar as informações", "Agir em engasgo, desmaio e sangramento", "Cuidar de queimaduras e torções até a ajuda chegar", "Saber o que não fazer para não piorar a situação"],
     description: "O que fazer, e o que não fazer, nos primeiros minutos de uma emergência até a ajuda chegar." },
   {
-    id: "hardware-so", title: "Hardware e sistema operacional", category: "tecnologia", teachers: ["Davi", "Lúcio"], tags: ["Computador", "Tecnologia", "Mão na massa", "Raciocínio"],
+    id: "hardware-so", title: "Hardware e sistema operacional", category: "tecnologia", tags: ["Computador", "Tecnologia", "Mão na massa", "Raciocínio"],
     hook: "Abra o computador por dentro e entenda como tudo funciona.",
     learn: ["Reconhecer as principais peças de um computador", "Entender o que cada peça faz e como elas conversam", "Instalar e configurar um sistema operacional", "Organizar arquivos, programas e atualizações", "Resolver problemas comuns e manter o computador saudável"],
    
     description: "Das peças do computador ao sistema que faz tudo funcionar: entender, cuidar e resolver problemas comuns.",
-    modules: [{ title: "Hardware básico", teacher: "Davi" }, { title: "Sistema operacional", teacher: "Lúcio" }],
+    modules: [{ title: "Hardware básico" }, { title: "Sistema operacional" }],
   },
-  { id: "impressora-3d", title: "Impressora 3D", category: "tecnologia", teachers: ["Giulianno"], tags: ["Tecnologia", "Criação", "Mão na massa"],
+  { id: "impressora-3d", title: "Impressora 3D", category: "tecnologia", tags: ["Tecnologia", "Criação", "Mão na massa"],
     hook: "Tire uma ideia da cabeça e segure ela na mão.",
     learn: ["Entender como uma impressora 3D funciona", "Desenhar uma peça simples no computador", "Preparar o arquivo para imprimir", "Escolher o material e ajustar a impressão", "Corrigir falhas comuns e dar acabamento à peça"],
     description: "Como uma ideia vira objeto: do desenho no computador à peça impressa." },
-  { id: "xadrez", title: "Xadrez", category: "jogos", teachers: ["Pedro"], tags: ["Estratégia", "Raciocínio", "Concentração"],
+  { id: "xadrez", title: "Xadrez", category: "jogos", tags: ["Estratégia", "Raciocínio", "Concentração"],
     hook: "Aprenda a pensar alguns lances à frente.",
     learn: ["Mover cada peça e entender as regras especiais", "Abrir a partida com um bom plano", "Reconhecer táticas como garfo e cravada", "Dar xeque-mate nos finais mais comuns", "Analisar suas partidas para melhorar"],
     description: "Das regras e movimentos às primeiras estratégias para pensar alguns lances à frente." },
-  { id: "domino", title: "Dominó", category: "jogos", teachers: ["Gustavo"], tags: ["Estratégia", "Raciocínio", "Diversão"],
+  { id: "domino", title: "Dominó", category: "jogos", tags: ["Estratégia", "Raciocínio", "Diversão"],
     hook: "Na mesa, quem conta as pedras sai na frente.",
     learn: ["Regras do dominó e das variações mais jogadas", "Contar pedras e prever o jogo do adversário", "Jogar em dupla com estratégia", "Saber a hora de fechar ou segurar o jogo"],
     description: "Regras, contagem de pedras e as jogadas que fazem diferença na mesa." },
-  { id: "jogos", title: "Jogos", category: "jogos", teachers: ["Jordan"], tags: ["Estratégia", "Diversão", "Criação", "Equipe"],
+  { id: "jogos", title: "Jogos", category: "jogos", tags: ["Estratégia", "Diversão", "Criação", "Equipe"],
     hook: "Jogar também é treinar a cabeça.",
     learn: ["Entender o que torna um jogo divertido", "Pensar em estratégia antes de cada jogada", "Aprender com a derrota e ajustar o plano", "Jogar em equipe e respeitar as regras"],
     description: "O que torna um jogo divertido e como pensar em estratégia jogando." },
   {
-    id: "futebol", title: "Futebol", category: "esporte", teachers: ["Marcos", "Luiddy"], tags: ["Esporte", "Equipe", "Saúde", "Estratégia"],
+    id: "futebol", title: "Futebol", category: "esporte", tags: ["Esporte", "Equipe", "Saúde", "Estratégia"],
     hook: "Do campo à areia: jogue melhor e em equipe.",
     learn: ["Fundamentos: passe, domínio, condução e chute", "Posicionamento e leitura de jogo", "Diferenças entre o futebol de campo e o de areia", "Jogar em equipe e se comunicar em campo", "Aquecer e se cuidar para evitar lesões"],
    
     description: "Fundamentos, posicionamento e jogo em equipe, no campo e na areia.",
-    modules: [{ title: "Futebol de campo", teacher: "Marcos" }, { title: "Futebol de areia", teacher: "Luiddy" }],
+    modules: [{ title: "Futebol de campo" }, { title: "Futebol de areia" }],
   },
-  { id: "autodesenvolvimento", title: "Autodesenvolvimento", category: "expressao", teachers: ["Rangel"], tags: ["Autoconhecimento", "Planejamento", "Rotina"],
+  { id: "autodesenvolvimento", title: "Autodesenvolvimento", category: "expressao", tags: ["Autoconhecimento", "Planejamento", "Rotina"],
     hook: "Conheça seus pontos fortes e faça um plano para crescer.",
     learn: ["Identificar seus pontos fortes e o que quer melhorar", "Definir metas possíveis, com prazo", "Criar hábitos pequenos que se mantêm", "Lidar com erros sem desistir", "Montar um plano para os próximos meses"],
     description: "Conhecer seus pontos fortes, definir metas possíveis e criar hábitos que ajudam a chegar lá." },
-  { id: "literatura", title: "Literatura", category: "expressao", teachers: ["Sarah"], tags: ["Leitura", "Escrita", "Criação"],
+  { id: "literatura", title: "Literatura", category: "expressao", tags: ["Leitura", "Escrita", "Criação"],
     hook: "Leia com gosto e comece a escrever as suas histórias.",
     learn: ["Escolher livros que combinam com você", "Entender melhor o que lê e conversar sobre isso", "Reconhecer estilos e gêneros literários", "Escrever um conto curto do início ao fim"],
     description: "Ler com gosto, entender melhor o que se lê e começar a escrever as próprias histórias." },
-  { id: "maquiagem", title: "Maquiagem", category: "expressao", teachers: ["Yasmin"], tags: ["Autocuidado", "Criação", "Expressão"],
+  { id: "maquiagem", title: "Maquiagem", category: "expressao", tags: ["Autocuidado", "Criação", "Expressão"],
     hook: "Do básico do dia a dia à produção para uma festa.",
     learn: ["Preparar e cuidar da pele antes da maquiagem", "Escolher base e corretivo para o seu tom", "Fazer uma maquiagem rápida para o dia a dia", "Montar uma produção para ocasiões especiais", "Limpar e guardar os pincéis e produtos"],
     description: "Do básico do dia a dia à produção para ocasiões especiais, com cuidado com a pele." },
@@ -131,10 +129,9 @@ export const hasLongWord = (title: string, limit = 15) => title.split(" ").some(
 
 export const categoryOf = (id: CategoryId) => CATEGORIES.find((category) => category.id === id) ?? CATEGORIES[0];
 export const courseById = (id: string) => COURSES.find((course) => course.id === id);
-export const teachersLabel = (course: Course) => course.teachers.join(" e ");
 
 /** Partes do curso: as definidas, ou uma parte única com o nome do curso. */
-export const partsOf = (course: Course) => course.modules ?? [{ title: "Aula de apresentação", teacher: course.teachers[0] }];
+export const partsOf = (course: Course) => course.modules ?? [{ title: "Aula de apresentação" }];
 
 /** Assuntos em comum entre dois cursos. */
 export const sharedTags = (a: Course, b: Course) => a.tags.filter((tag) => b.tags.includes(tag));

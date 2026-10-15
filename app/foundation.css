@@ -83,18 +83,6 @@
 .fdn-match-more strong { font-size: 15px; line-height: 1.25; }
 .fdn-match-more small { font-size: 13px; color: #a9aeb9; }
 
-/* Varal de crachás de quem ensina */
-.fdn-section-teachers { overflow: hidden; }
-.fdn-section-teachers .fdn-head { margin-bottom: 8px; }
-.fdn-rail { position: relative; padding: 46px 0 30px; overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent); mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent); }
-.fdn-rail::before { content: ""; position: absolute; left: 0; right: 0; top: 21px; height: 2px; background: linear-gradient(90deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.1)); }
-.fdn-rail-track { display: flex; align-items: flex-start; width: max-content; animation: fdn-slide 120s linear infinite; }
-.fdn-rail:hover .fdn-rail-track, .fdn-rail:focus-within .fdn-rail-track { animation-play-state: paused; }
-.fdn-rail-item { flex: none; width: 270px; margin-right: 22px; color: inherit; text-decoration: none; border-radius: 20px; }
-.fdn-rail-item .fc-badge { transform: rotate(-1.5deg); }
-.fdn-rail-item:nth-child(even) .fc-badge { transform: rotate(1.5deg); }
-.fdn-rail-item:hover .fc-badge, .fdn-rail-item:focus-visible .fc-badge { animation: fc-swing .6s cubic-bezier(.3, 1.6, .5, 1); }
-
 /* Como funciona */
 .fdn-steps { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
 .fdn-steps li { padding: 30px 28px 32px; border-radius: 24px; background: #111318; border: 1px solid rgba(255, 255, 255, 0.08); }
@@ -141,17 +129,12 @@
   .fdn-match-copy { padding: 22px 20px 24px; }
   .fdn-match-foot { flex-direction: column; align-items: stretch; }
   .fdn-match-cta { justify-content: center; }
-  .fdn-rail-item { width: 240px; margin-right: 16px; }
   .fdn-steps li { padding: 24px 22px 26px; }
   .fdn-steps b { font-size: 48px; }
   .fdn-final { padding: 80px 0; }
 }
 @media (prefers-reduced-motion: reduce) {
   .fdn-wall-row, .fdn-match-result { animation: none; }
-  .fdn-rail { overflow-x: auto; }
-  .fdn-rail-track { animation: none; padding-inline: 24px; }
-  .fdn-rail-item[aria-hidden="true"] { display: none; }
-  .fdn-rail-item:hover .fc-badge, .fdn-rail-item:focus-visible .fc-badge { animation: none; }
   .fdn-match-ask button, .fdn-match-photo img, .fdn-match-more a { transition: none; }
 }
 
@@ -270,11 +253,6 @@ body:has(.fc) .rb-noncommercial-seal { display: none; }
 .fc-results h2 { font-size: 22px; }
 .fc-grid { margin-top: 16px; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
 .fc-grid .fc-card { width: 100%; height: auto; aspect-ratio: 16 / 9; }
-
-/* Quem ensina */
-.fc-teachers { margin-top: 72px; padding: 0 var(--fc-side); scroll-margin-top: 16px; }
-.fc-teachers h2 { font-size: 22px; letter-spacing: -0.01em; }
-.fc-teachers > p { margin-top: 6px !important; font-size: 15px; color: #a9aeb9; }
 
 /* Rodapé */
 .fc-footer { margin-top: 72px; padding: 40px var(--fc-side) 48px; border-top: 1px solid rgba(255, 255, 255, 0.1); display: flex; flex-wrap: wrap; align-items: center; gap: 16px 32px; font-size: 15px; color: #a9aeb9; }
@@ -468,7 +446,6 @@ body:has(.fc) .rb-noncommercial-seal { display: none; }
   .fc-poster-card { width: 128px; height: 184px; margin-left: -14px; border-radius: 12px; }
   .fc-poster-copy { left: 12px; right: 12px; bottom: 12px; }
   .fc-poster-copy strong { font-size: 15px; }
-  .fc-teachers { margin-top: 56px; }
   .fc-footer { padding: 28px 16px 40px; flex-direction: column; align-items: flex-start; }
   .fc-footer nav { margin-left: 0; }
 }
@@ -479,7 +456,7 @@ body:has(.fc) .rb-noncommercial-seal { display: none; }
 }
 
 /* ------------------------------------------------------------------ */
-/* Fotos dos cursos, selo de categoria, crachás e logo no topo         */
+/* Fotos dos cursos, selo de categoria e logo no topo                  */
 /* ------------------------------------------------------------------ */
 
 /* Foto ocupa o card; um degradê escuro embaixo garante a leitura do título. */
@@ -536,30 +513,6 @@ body:has(.fc) .rb-noncommercial-seal { display: none; }
   -webkit-mask-composite: source-in; mask-image: linear-gradient(90deg, transparent 0%, #000 40%), linear-gradient(0deg, transparent 0%, #000 30%); mask-composite: intersect; }
 .fc-billboard-logo { position: absolute; left: 56%; top: 46%; width: min(440px, 62%); height: auto; transform: translate(-50%, -50%); filter: drop-shadow(0 20px 60px rgba(37, 99, 235, 0.55)); }
 
-/* Crachás de quem ensina (mesmo visual do organograma) */
-.fc-badges > li { display: grid; }
-.fc-badges { margin: 22px 0 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 34px 16px; }
-.fc-badges.is-dialog { margin-top: 30px; grid-template-columns: repeat(auto-fill, minmax(240px, 300px)); }
-.fc-badge-btn { width: 100%; height: 100%; padding: 0; border: 0; background: none; color: inherit; text-align: left; border-radius: 20px; }
-.fc-badge { position: relative; height: 100%; display: flex; flex-direction: column; gap: 6px; padding: 22px 20px 16px; border-radius: 20px; background: #0f1115; color: #f4f5f7; border-top: 6px solid var(--badge); box-shadow: 0 20px 44px rgba(0, 0, 0, 0.45); transform-origin: 50% -18px; transition: transform .25s ease; }
-.fc-badge-btn:hover .fc-badge, .fc-badge-btn:focus-visible .fc-badge { animation: fc-swing .6s cubic-bezier(.3, 1.6, .5, 1); }
-@keyframes fc-swing { 0% { transform: rotate(-5deg); } 60% { transform: rotate(2deg); } 100% { transform: rotate(0); } }
-.fc-badge-strap { position: absolute; left: 50%; top: -24px; width: 18px; height: 22px; transform: translateX(-50%); border-radius: 4px 4px 2px 2px; background: var(--badge); }
-.fc-badge-strap::after { content: ""; position: absolute; left: 50%; bottom: 4px; width: 8px; height: 4px; transform: translateX(-50%); border-radius: 4px; background: rgba(0, 0, 0, 0.35); }
-.fc-badge-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 6px; }
-.fc-badge-top .fc-mark { --h: 26px; }
-.fc-badge-top > span:last-child { padding: 3px 10px; border-radius: 999px; background: color-mix(in srgb, var(--badge) 22%, transparent); color: var(--badge); font-size: 11.5px; font-weight: 700; text-align: right; }
-.fc-badge > small { font-size: 11.5px; letter-spacing: .1em; text-transform: uppercase; color: #9aa0ab; }
-.fc-badge-name { font-size: 32px; line-height: 1; letter-spacing: -0.03em; }
-.fc-badge-sign { width: 130px; height: 12px; margin-top: -2px; }
-.fc-badge-sign path { fill: none; stroke: var(--badge); stroke-width: 2.5; stroke-linecap: round; }
-.fc-badge-role { font-size: 14.5px; font-weight: 700; color: #fff; }
-.fc-badge-course { font-size: 13.5px; line-height: 1.45; color: #b7bcc6; }
-.fc-badge-course b { color: #fff; }
-.fc-badge-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: auto; padding-top: 10px; border-top: 1px dashed #2c3039; }
-.fc-badge-foot i { flex: 1; height: 22px; background: repeating-linear-gradient(90deg, #d6d9e0 0 2px, transparent 2px 4px, #d6d9e0 4px 5px, transparent 5px 8px, #d6d9e0 8px 11px, transparent 11px 13px); opacity: .55; }
-.fc-badge-foot b { font-family: ui-monospace, Consolas, monospace; font-size: 12px; color: #9aa0ab; letter-spacing: .08em; }
-
 @media (max-width: 760px) {
   .fc-billboard-art { width: 100%; -webkit-mask-image: linear-gradient(0deg, transparent 0%, #000 60%); mask-image: linear-gradient(0deg, transparent 0%, #000 60%); }
   .fc-billboard-logo { left: 50%; top: 30%; width: min(240px, 60%); }
@@ -570,10 +523,6 @@ body:has(.fc) .rb-noncommercial-seal { display: none; }
   .fc-poster-copy strong.is-long { font-size: 12px; }
   .fc-cat { left: 8px; top: 8px; padding: 3px 7px 3px 5px; font-size: 9.5px; }
   .fc-dialog-hero > .fc-cat { left: 20px; top: 24px; }
-  .fc-badges { grid-template-columns: 1fr; gap: 34px; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .fc-badge-btn:hover .fc-badge, .fc-badge-btn:focus-visible .fc-badge { animation: none; }
 }
 
 /* ------------------------------------------------------------------ */

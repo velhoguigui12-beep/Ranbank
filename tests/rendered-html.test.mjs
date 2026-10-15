@@ -325,19 +325,31 @@ test("links the bank's Foundation page to the Foundation course catalog", async 
   const courses = await readFile(new URL("../app/foundation-courses.ts", import.meta.url), "utf8");
   assert.match(publicSite, /\{ href: "\/organograma", label: "Quem somos" \},\s*\{ href: "\/fundacao", label: "Fundação" \},\s*\{ href: "\/#duvidas", label: "Ajuda" \}/);
   assert.match(publicSite, /export function FoundationPublicPage\(\)/);
-  assert.match(publicSite, /Aprenda com <span>quem fez\.<\/span>/);
+  assert.match(publicSite, /Aprenda no <span>seu ritmo\.<\/span>/);
   assert.match(publicSite, /href=\{FOUNDATION_SITE_URL\} target="_blank" rel="noopener"/);
-  // Vitrine: parede de cursos, "O que você quer aprender agora?" com link direto para o curso e varal de crachás.
-  for (const piece of ["function FoundationWall(", "function FoundationMatch(", "function FoundationTeachers(", "O que você quer aprender agora?"]) assert.ok(publicSite.includes(piece), piece);
+  // Vitrine: parede de cursos e "O que você quer aprender agora?" com link direto para o curso.
+  for (const piece of ["function FoundationWall(", "function FoundationMatch(", "O que você quer aprender agora?"]) assert.ok(publicSite.includes(piece), piece);
   assert.match(publicSite, /\$\{FOUNDATION_SITE_URL\}\?curso=\$\{course\.id\}/);
   assert.match(catalog, /get\("curso"\)/);
   assert.match(route, /FoundationPublicPage/);
   assert.match(catalogRoute, /FoundationCatalog/);
   assert.match(courses, /export const FOUNDATION_SITE_URL = "\/fundacao\/cursos";/);
-  // Cursos reais, com quem ensina, e a trilha Isabella → Natanny → Rangel.
-  for (const teacher of ["Isabella", "Natanny", "Lívia", "Davi", "Lúcio", "Giulianno", "Pedro", "Gustavo", "Jordan", "Marcos", "Luiddy", "Rangel", "Sarah", "Yasmin"]) assert.ok(courses.includes(`"${teacher}"`), teacher);
+  // A Fundação não cita quem ensina: nenhum nome da turma, crachá ou seção "Quem ensina".
+  const badge = await readFile(new URL("../app/FoundationBadge.tsx", import.meta.url), "utf8");
+  const rani = await readFile(new URL("../app/rani-knowledge.ts", import.meta.url), "utf8");
+  const foundationPage = publicSite.slice(publicSite.indexOf("/* Fundação RanBank: vitrine"), publicSite.indexOf("export function InstitutePublicPage"));
+  const raniFoundation = rani.slice(rani.indexOf('topic: "Fundação RanBank"'), rani.indexOf('topic: "Parcerias"'));
+  const foundationFiles = { foundationPage, catalog, courses, badge, route, catalogRoute, raniFoundation };
+  for (const [file, text] of Object.entries(foundationFiles)) {
+    for (const name of ["Isabela", "Isabella", "Natanny", "Lívia", "Davi", "Lucio", "Lúcio", "Giulianno", "Pedro", "Gustavo", "Jordan", "Marcos", "Luidy", "Luiddy", "Rangel", "Sarah", "Yasmin"]) assert.ok(!text.includes(name), `${file}: ${name}`);
+    for (const word of ["teacher", "Quem ensina", "turma", "TeacherBadge", "/organograma"]) assert.ok(!text.includes(word), `${file}: ${word}`);
+  }
+  // Grafia correta dos nomes no organograma.
+  const team = await readFile(new URL("../app/team.ts", import.meta.url), "utf8");
+  for (const name of ['person: "Lucio"', 'person: "Isabela"', 'person: "Luidy"']) assert.ok(team.includes(name), name);
+  for (const name of ["Lúcio", "Isabella", "Luiddy"]) assert.ok(!team.includes(name), name);
   assert.match(courses, /STARTER_PATH = \["educacao-financeira", "gestao-tempo", "autodesenvolvimento"\]/);
-  for (const row of ["Continue assistindo", "Comece por aqui", "Minha lista", "Quem ensina", "Porque você fez", "Porque você gostou de", "Mais como este"]) assert.ok(catalog.includes(row), row);
+  for (const row of ["Continue assistindo", "Comece por aqui", "Minha lista", "Porque você fez", "Porque você gostou de", "Mais como este"]) assert.ok(catalog.includes(row), row);
   // Prévia ao passar o mouse, modal com o que se aprende e player de prévia que salva o progresso.
   assert.match(catalog, /function HoverPreview\(/);
   assert.match(catalog, /O que você vai aprender até o final do curso/);

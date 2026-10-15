@@ -6,9 +6,8 @@ import type { AnchorHTMLAttributes, CSSProperties, ReactNode } from "react";
 import { Icon } from "./SiteIcons";
 import RaniAssistant, { openRani } from "./RaniAssistant";
 import { ControlDemo, MonthDemo, NoticesDemo, ScamHelpDemo } from "./CalmBank";
-import { CATEGORIES, COURSES, FOUNDATION_SITE_URL, categoryOf, courseImage, teachersLabel } from "./foundation-courses";
+import { CATEGORIES, COURSES, FOUNDATION_SITE_URL, categoryOf, courseImage } from "./foundation-courses";
 import type { CategoryId, Course } from "./foundation-courses";
-import { TeacherBadge, teachingParts } from "./FoundationBadge";
 import { CategoryGlyph, PlayGlyph } from "./FoundationIcons";
 import type { IconName } from "./SiteIcons";
 
@@ -734,8 +733,6 @@ const FOUNDATION_STEPS = [
   { title: "Entre com a sua conta RanBank", text: "O mesmo CPF e a mesma senha do banco. Seus cursos concluídos e a sua lista ficam no seu perfil." },
 ];
 const courseLink = (course: Course) => `${FOUNDATION_SITE_URL}?curso=${course.id}`;
-const TEACHING = teachingParts(COURSES);
-const TEACHER_COUNT = new Set(TEACHING.map((person) => person.name)).size;
 
 /** Parede de cursos que desliza devagar atrás do título, como a abertura de um app de filmes. */
 function FoundationWall() {
@@ -792,7 +789,7 @@ function FoundationMatch() {
               {main.learn.slice(0, 3).map((topic) => <span key={topic}>{topic}</span>)}
             </span>
             <span className="fdn-match-foot">
-              <span>Com {teachersLabel(main)}</span>
+              <span>Para iniciantes</span>
               <span className="fdn-match-cta"><PlayGlyph size={14} /> Ver este curso</span>
             </span>
           </span>
@@ -803,38 +800,11 @@ function FoundationMatch() {
             {others.map((course) => (
               <a key={course.id} href={courseLink(course)} target="_blank" rel="noopener noreferrer">
                 <img src={courseImage(course)} alt="" loading="lazy" />
-                <span><strong>{course.title}</strong><small>Com {teachersLabel(course)}</small></span>
+                <span><strong>{course.title}</strong><small>{course.tags.slice(0, 2).join(" · ")}</small></span>
               </a>
             ))}
           </div>
         )}
-      </div>
-    </div>
-  );
-}
-
-/** Varal de crachás: cada pessoa da turma que ensina, passando devagar. Parar o mouse segura o varal. */
-function FoundationTeachers() {
-  return (
-    <div className="fdn-rail">
-      <div className="fdn-rail-track">
-        {[...TEACHING, ...TEACHING].map((person, index) => {
-          const copy = index >= TEACHING.length;
-          return (
-            <a
-              key={`${person.name}-${person.course.id}-${index}`}
-              className="fdn-rail-item"
-              href={courseLink(person.course)}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-hidden={copy || undefined}
-              tabIndex={copy ? -1 : undefined}
-              aria-label={copy ? undefined : `${person.name} ensina ${person.part ?? person.course.title}. Ver o curso`}
-            >
-              <TeacherBadge name={person.name} course={person.course} part={person.part} />
-            </a>
-          );
-        })}
       </div>
     </div>
   );
@@ -847,15 +817,14 @@ export function FoundationPublicPage() {
         <FoundationWall />
         <div className="rs-wrap fdn-hero-copy">
           <span className="fdn-kicker"><span className="fdn-mark" aria-hidden="true"><img src="/ranbank-logo-transparent.png" alt="" /></span> Fundação RanBank</span>
-          <h1>Aprenda com <span>quem fez.</span></h1>
-          <p>{COURSES.length} cursos curtos ensinados pela própria turma do RanBank. De dinheiro a xadrez, de impressora 3D a futebol de areia.</p>
+          <h1>Aprenda no <span>seu ritmo.</span></h1>
+          <p>{COURSES.length} cursos curtos e práticos, para quem está começando. De dinheiro a xadrez, de impressora 3D a futebol de areia.</p>
           <div className="fdn-actions">
             <Link className="rs-btn rs-btn-light rs-btn-lg fdn-btn-play" href={FOUNDATION_SITE_URL} target="_blank" rel="noopener"><PlayGlyph size={18} /> Entrar na Fundação</Link>
             <Link className="rs-btn rs-btn-outline rs-btn-lg" href="#descobrir">Descobrir meu curso</Link>
           </div>
           <ul className="fdn-facts">
             <li><b>{COURSES.length}</b> cursos</li>
-            <li><b>{TEACHER_COUNT}</b> pessoas ensinando</li>
             <li><b>{CATEGORIES.length}</b> categorias</li>
           </ul>
         </div>
@@ -870,17 +839,6 @@ export function FoundationPublicPage() {
           </header>
           <FoundationMatch />
         </div>
-      </section>
-
-      <section className="fdn-section fdn-section-teachers">
-        <div className="rs-wrap">
-          <header className="fdn-head">
-            <span className="fdn-kicker">Quem ensina</span>
-            <h2>Seus professores são a turma do RanBank.</h2>
-            <p>Cada pessoa ensina o que sabe e o que gosta de fazer. Clique num crachá para ver o curso.</p>
-          </header>
-        </div>
-        <FoundationTeachers />
       </section>
 
       <section className="fdn-section">
@@ -898,7 +856,7 @@ export function FoundationPublicPage() {
               </li>
             ))}
           </ol>
-          <p className="fdn-honest">As aulas estão sendo gravadas pela turma. O catálogo já mostra tudo o que vem por aí.</p>
+          <p className="fdn-honest">As aulas estão sendo gravadas. O catálogo já mostra tudo o que vem por aí.</p>
         </div>
       </section>
 
@@ -906,10 +864,10 @@ export function FoundationPublicPage() {
         <div className="rs-wrap">
           <img className="fdn-final-logo" src="/ranbank-logo-transparent.png" alt="" />
           <h2>A próxima parte da história.</h2>
-          <p>O RanBank continua. Agora, o que a turma sabe vira curso para mais gente.</p>
+          <p>O RanBank continua. Agora, com cursos curtos e práticos para mais gente.</p>
           <div className="fdn-actions">
             <Link className="rs-btn rs-btn-light rs-btn-lg fdn-btn-play" href={FOUNDATION_SITE_URL} target="_blank" rel="noopener"><PlayGlyph size={18} /> Entrar na Fundação</Link>
-            <Link className="rs-btn fdn-btn-ghost rs-btn-lg" href="/organograma">Conhecer quem faz</Link>
+            <Link className="rs-btn fdn-btn-ghost rs-btn-lg" href="/">Voltar ao RanBank</Link>
           </div>
         </div>
       </section>

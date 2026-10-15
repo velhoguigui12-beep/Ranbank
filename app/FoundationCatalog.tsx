@@ -4,13 +4,13 @@
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties, ReactNode } from "react";
-import { CATEGORIES, COURSES, PHOTO_CREDITS, STARTER_PATH, categoryOf, courseById, courseImage, hasLongWord, partsOf, sharedTags, similarCourses, teachersLabel } from "./foundation-courses";
+import { CATEGORIES, COURSES, PHOTO_CREDITS, STARTER_PATH, categoryOf, courseById, courseImage, hasLongWord, partsOf, sharedTags, similarCourses } from "./foundation-courses";
 import type { CategoryId, Course } from "./foundation-courses";
 import { CategoryGlyph, PlayGlyph } from "./FoundationIcons";
-import { Mark, TeacherBadge, teachingParts } from "./FoundationBadge";
+import { Mark } from "./FoundationBadge";
 
 /*
- * Site da Fundação RanBank: catálogo de cursos da turma, no jeito de um app de streaming.
+ * Site da Fundação RanBank: catálogo de cursos, no jeito de um app de streaming.
  * Passar o mouse mostra uma prévia; clicar abre o modal com tudo; "Assistir" abre o player de prévia.
  * Login: a Fundação está no mesmo site do banco, então usa a mesma sessão (mesmo nome, CPF e senha).
  * O que cada pessoa assiste, guarda e curte fica salvo neste navegador, separado por conta (localStorage).
@@ -100,7 +100,7 @@ function PauseGlyph() {
   return <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z" fill="currentColor" /></svg>;
 }
 
-/* Foto, selo da categoria e crachá ---------------------------------- */
+/* Foto e selo da categoria ---------------------------------- */
 
 function CoursePhoto({ course, className = "" }: { course: Course; className?: string }) {
   return <img className={`fc-photo ${className}`} src={courseImage(course)} alt="" loading="lazy" decoding="async" />;
@@ -124,7 +124,7 @@ function CourseCard({ course, handlers, pct }: { course: Course; handlers: CardH
       onClick={() => handlers.onOpen(course)}
       onMouseEnter={(event) => handlers.onHoverStart(course, event.currentTarget)}
       onMouseLeave={handlers.onHoverEnd}
-      aria-label={`${course.title}, com ${teachersLabel(course)}${pct ? `, ${pct}% assistido` : ""}. Ver detalhes`}
+      aria-label={`${course.title}${pct ? `, ${pct}% assistido` : ""}. Ver detalhes`}
     >
       <CoursePhoto course={course} />
       <CategoryTag course={course} />
@@ -193,7 +193,6 @@ function HoverPreview({ state, actions, lastWatched, onEnter, onLeave }: { state
         <p className="fc-preview-hook">{course.hook}</p>
         {common.length > 0 && lastWatched && <p className="fc-preview-match">Tem a ver com {lastWatched.title}: {common.join(", ").toLowerCase()}</p>}
         <p className="fc-preview-meta">
-          <span>Com {teachersLabel(course)}</span>
           <span>{parts.length > 1 ? `${parts.length} partes` : "Parte única"}</span>
           {pct > 0 && <span className="is-green">{progress?.done ? "Concluído" : `${pct}% assistido`}</span>}
         </p>
@@ -266,20 +265,10 @@ function CourseDialog({ course, actions, onClose }: { course: Course; actions: A
             </div>
           </div>
           <aside className="fc-dialog-side">
-            <p><span>Com:</span> {teachersLabel(course)}</p>
             <p><span>Categoria:</span> <b style={{ color: category.accent }}>{category.name}</b></p>
             <p><span>Assuntos:</span> {course.tags.join(", ")}</p>
             {PHOTO_CREDITS[course.id] && <p className="fc-credit"><span>Foto:</span> <a href={PHOTO_CREDITS[course.id].url} target="_blank" rel="noopener noreferrer">{PHOTO_CREDITS[course.id].by} / Unsplash</a></p>}
           </aside>
-        </div>
-
-        <div className="fc-dialog-section">
-          <h3>Quem ensina</h3>
-          <div className="fc-badges is-dialog">
-            {(course.modules ?? course.teachers.map((teacher) => ({ title: "", teacher }))).map((part) => (
-              <TeacherBadge key={part.teacher} name={part.teacher} course={course} part={part.title || undefined} />
-            ))}
-          </div>
         </div>
 
         <div className="fc-dialog-section">
@@ -291,14 +280,14 @@ function CourseDialog({ course, actions, onClose }: { course: Course; actions: A
                 <li key={part.title}>
                   <button type="button" onClick={() => actions.play(course, index)} aria-label={`Assistir parte ${index + 1}: ${part.title}`}>
                     <b aria-hidden="true">{index + 1}</b>
-                    <span className="fc-part-copy"><strong>{part.title}</strong><small>com {part.teacher}</small>{state.pct > 0 && <span className="fc-part-bar" aria-hidden="true"><i style={{ width: `${state.pct}%` }} /></span>}</span>
+                    <span className="fc-part-copy"><strong>{part.title}</strong>{state.pct > 0 && <span className="fc-part-bar" aria-hidden="true"><i style={{ width: `${state.pct}%` }} /></span>}</span>
                     <span className="fc-part-state">{state.label || <PlayGlyph size={16} />}</span>
                   </button>
                 </li>
               );
             })}
           </ol>
-          <p className="fc-dialog-note">Prévia: as aulas estão sendo gravadas pela turma. O player já salva o seu progresso neste navegador.</p>
+          <p className="fc-dialog-note">Prévia: as aulas estão sendo gravadas. O player já salva o seu progresso neste navegador.</p>
         </div>
 
         {similar.length > 0 && (
@@ -316,7 +305,6 @@ function CourseDialog({ course, actions, onClose }: { course: Course; actions: A
                     </span>
                     <span className="fc-similar-copy">
                       <strong>{other.title}</strong>
-                      <small>Com {teachersLabel(other)}</small>
                       <small className="is-green">Em comum: {(common.length ? common.join(", ") : otherCategory.name).toLowerCase()}</small>
                     </span>
                   </button>
@@ -404,7 +392,6 @@ function Player({ course, start, initialPct, onSave, onClose, onOpen }: { course
                 <CoursePhoto course={other} />
                 <CategoryTag course={other} />
                 <strong>{other.title}</strong>
-                <small>Com {teachersLabel(other)}</small>
               </button>
             ))}
           </div>
@@ -414,7 +401,7 @@ function Player({ course, start, initialPct, onSave, onClose, onOpen }: { course
           <CoursePhoto course={course} className="is-blur" />
           <span className="fc-player-icon" aria-hidden="true"><CategoryGlyph icon={category.icon} size={96} /></span>
           <p className="fc-player-badge">Aula em gravação</p>
-          <p className="fc-player-who">{current.title} · com {current.teacher}</p>
+          <p className="fc-player-who">{current.title}</p>
         </div>
       )}
 
@@ -496,9 +483,9 @@ function ProfileDialog({ account, saved, onOpen, onLogout, onClose }: { account:
         </ul>
 
         <div className="fc-profile-body">
-          {group("Cursos concluídos", "Quando você terminar um curso, ele aparece aqui.", done.map((course) => mini(course, `Com ${teachersLabel(course)} · Concluído`)))}
+          {group("Cursos concluídos", "Quando você terminar um curso, ele aparece aqui.", done.map((course) => mini(course, "Concluído")))}
           {group("Continue assistindo", "Nenhum curso em andamento.", watching.map(({ course, progress }) => mini(course, `${coursePct(course, progress)}% assistido`)))}
-          {group("Minha lista", "Use o + nos cursos para guardar o que quer ver depois.", list.map((course) => mini(course, `Com ${teachersLabel(course)}`)))}
+          {group("Minha lista", "Use o + nos cursos para guardar o que quer ver depois.", list.map((course) => mini(course, categoryOf(course.category).name)))}
           <p className="fc-profile-note">É a mesma conta do banco: mesmo nome, CPF e senha. Por enquanto, o seu progresso fica salvo neste navegador.</p>
           <div className="fc-profile-actions">
             <Link className="fc-btn fc-btn-light" href="/banco">Voltar ao RanBank</Link>
@@ -629,7 +616,7 @@ export default function FoundationCatalog() {
   const results = useMemo(() => {
     const term = normalize(query.trim());
     if (!term) return [];
-    return COURSES.filter((course) => normalize(`${course.title} ${course.teachers.join(" ")} ${categoryOf(course.category).name} ${course.tags.join(" ")}`).includes(term));
+    return COURSES.filter((course) => normalize(`${course.title} ${categoryOf(course.category).name} ${course.tags.join(" ")}`).includes(term));
   }, [query]);
 
   const cards = (list: Course[]) => list.map((course) => <CourseCard key={course.id} course={course} handlers={handlers} />);
@@ -653,14 +640,13 @@ export default function FoundationCatalog() {
             <a href="#inicio" aria-current="page">Início</a>
             <a href="#cursos">Cursos</a>
             <a href="#trilha">Trilhas</a>
-            <a href="#quem-ensina">Quem ensina</a>
             <a href="#minha-lista">Minha lista</a>
           </nav>
           <div className="fc-header-actions">
             {searching && (
               <label className="fc-search">
                 <span className="fc-sr">Buscar cursos</span>
-                <input ref={searchRef} value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Curso, pessoa ou assunto" onKeyDown={(event) => { if (event.key === "Escape") { setQuery(""); setSearching(false); } }} />
+                <input ref={searchRef} value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Curso ou assunto" onKeyDown={(event) => { if (event.key === "Escape") { setQuery(""); setSearching(false); } }} />
               </label>
             )}
             <button type="button" className="fc-icon-btn" aria-label={searching ? "Fechar busca" : "Buscar cursos"} aria-expanded={searching} onClick={() => { setSearching(!searching); if (searching) setQuery(""); }}>
@@ -676,7 +662,7 @@ export default function FoundationCatalog() {
         <div className="fc-billboard-copy">
           <span className="fc-eyebrow" style={{ color: featuredCategory.accent }}>Comece por aqui · {featuredCategory.name}</span>
           <h1 id="fc-featured-title" className={longTitle(featured)}>{featured.title}</h1>
-          <p className="fc-billboard-meta">Com {teachersLabel(featured)} <span aria-hidden="true">·</span> Passo {featuredIndex + 1} de {starter.length} da trilha</p>
+          <p className="fc-billboard-meta">Passo {featuredIndex + 1} de {starter.length} da trilha</p>
           <p className="fc-billboard-text">{featured.hook}</p>
           <div className="fc-billboard-actions">
             <button type="button" className="fc-btn fc-btn-light" onClick={() => actions.play(featured)}><PlayGlyph /> {featuredPct ? "Continuar" : "Assistir"}</button>
@@ -692,7 +678,7 @@ export default function FoundationCatalog() {
         </div>
       </section>
 
-      <p className="fc-preview-note">Prévia do catálogo: as aulas estão sendo preparadas pela turma do RanBank.</p>
+      <p className="fc-preview-note">Prévia do catálogo: as aulas estão sendo preparadas.</p>
 
       <div className="fc-chips" role="group" aria-label="Filtrar por categoria" id="cursos">
         <button type="button" aria-pressed={filter === "todos"} onClick={() => setFilter("todos")}>Todos</button>
@@ -726,12 +712,12 @@ export default function FoundationCatalog() {
           <Row id="trilha" title="Comece por aqui" action={<span className="fc-row-note">Uma trilha em ordem, para quem está começando</span>} onScroll={hidePreview}>
             {starter.map((course, index) => {
               return (
-                <button type="button" key={course.id} className="fc-poster" style={cardStyle(course)} onClick={() => actions.open(course)} aria-label={`Passo ${index + 1}: ${course.title}, com ${teachersLabel(course)}`}>
+                <button type="button" key={course.id} className="fc-poster" style={cardStyle(course)} onClick={() => actions.open(course)} aria-label={`Passo ${index + 1}: ${course.title}`}>
                   <span className="fc-poster-number" aria-hidden="true">{index + 1}</span>
                   <span className="fc-poster-card">
                     <CoursePhoto course={course} />
                     <CategoryTag course={course} />
-                    <span className="fc-poster-copy"><strong className={longTitle(course)}>{course.title}</strong><small>Com {teachersLabel(course)}</small></span>
+                    <span className="fc-poster-copy"><strong className={longTitle(course)}>{course.title}</strong><small>{categoryOf(course.category).name}</small></span>
                   </span>
                 </button>
               );
@@ -761,28 +747,11 @@ export default function FoundationCatalog() {
         </>
       )}
 
-      <section className="fc-teachers" id="quem-ensina" aria-labelledby="fc-teachers-title">
-        <h2 id="fc-teachers-title">Quem ensina</h2>
-        <p>Pessoas da turma do RanBank, cada uma ensinando o que sabe.</p>
-        <ul className="fc-badges">
-          {teachingParts(COURSES)
-            .sort((x, y) => x.name.localeCompare(y.name, "pt-BR"))
-            .map((person) => (
-              <li key={`${person.name}-${person.course.id}`}>
-                <button type="button" className="fc-badge-btn" onClick={() => actions.open(person.course)} aria-label={`${person.name} ensina ${person.part ?? person.course.title}. Ver o curso`}>
-                  <TeacherBadge name={person.name} course={person.course} part={person.part} />
-                </button>
-              </li>
-            ))}
-        </ul>
-      </section>
-
       <footer className="fc-footer">
         <span className="fc-brand is-small"><Mark /><strong>Fundação RanBank</strong></span>
         <span>Uma iniciativa do RanBank, projeto educacional feito em Brasília - DF.</span>
         <nav aria-label="Links do rodapé">
           <Link href="/fundacao">Sobre a Fundação</Link>
-          <Link href="/organograma">Quem faz o RanBank</Link>
           <Link href="/privacidade">Privacidade</Link>
           <Link href="/">Voltar ao RanBank</Link>
           <button type="button" className="fc-reset" onClick={() => { if (confirmReset) { update(() => EMPTY); setConfirmReset(false); } else setConfirmReset(true); }}>
